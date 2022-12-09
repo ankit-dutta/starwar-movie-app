@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState,useEffect, useCallback } from 'react';
 
 import MoviesList from './components/MoviesList';
 import './App.css';
@@ -48,21 +48,15 @@ function App() {
 
 
 
-    const cancelRetryingHandler = ()=>{
-      // clearInterval(timer)
-      setError(error.message);
-      
-    }
-
   // FETCHING DATA USING ASYNC AWAIT 
 
-  async function fetchMovieHandler(){
+  const fetchMovieHandler = useCallback(async () => {
     setLoading(true);
     setError(null)
     
     try{
       
-      const res = await fetch('https://swapi.py4e.com/api/ilms/')
+      const res = await fetch('https://swapi.py4e.com/api/films/')
 
       if(!res.ok){
         throw new Error('something went wrong!....Retrying')
@@ -88,7 +82,11 @@ function App() {
       setError(error.message);
     }
     setLoading(false);
-    }
+    },[])
+
+    useEffect(()=>{
+      fetchMovieHandler()
+    },[fetchMovieHandler])
 
   // console.log(timer)
     
@@ -107,7 +105,7 @@ function App() {
     content = (
       <div>
         <p> {error} </p>
-        <button onClick={cancelRetryingHandler}> Cancel Retry </button>
+        {/* <button onClick={cancelRetryingHandler}> Cancel Retry </button> */}
       </div>
     );
   }
@@ -116,12 +114,17 @@ function App() {
     content = <p>Loading...</p>
   }
   
+  // const cancelRetryingHandler = ()=>{
+  //   // clearInterval(timer)
+  //   setError(error.message);
+    
+  // }
 
   return (
     <React.Fragment>
       <section>
         <button onClick={fetchMovieHandler}>Fetch Movies</button>
-        <button onClick={cancelRetryingHandler}>Cancel Retrying</button>
+        {/* <button onClick={cancelRetryingHandler}>Cancel Retrying</button> */}
       </section>
       <section>
         {content}
